@@ -1,59 +1,58 @@
 # Brasileirão Position Predictor
 
-Modelo de regressão linear que tenta prever a posição final de um time no Campeonato Brasileiro Série A, usando apenas o desempenho dele nas 10 primeiras rodadas.
+A linear regression model that tries to predict a team's final league position in the Brazilian Série A, using only its performance in the first 10 matchdays.
 
-Projeto feito como prática da Especialização em Aprendizado de Máquina (Coursera, Andrew Ng) e do livro *Aprendizado de Máquina com Scikit-Learn, Keras e TensorFlow* — primeira vez usando Scikit-Learn e primeira regressão com múltiplas features de verdade.
+Built as hands-on practice for the Machine Learning Specialization (Coursera, Andrew Ng) and the book *Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow* — first time using Scikit-Learn and the first regression with real multiple features.
 
-## Contexto e pivô
+## Context and pivot
 
-A ideia original era outra: prever o **público médio** de um time a partir do seu desempenho, testando a hipótese de que "time que joga bem atrai mais torcedores". Depois de levantar datasets reais do Brasileirão, ficou claro que nenhuma fonte disponível trazia número de público por jogo — o dado que sustentava a pergunta simplesmente não existia nas mãos.
+The original idea was different: predict a team's **average attendance** based on its performance, testing the hypothesis that "a team playing well attracts more fans." After gathering real Brasileirão datasets, it became clear that no available source had per-match attendance numbers — the data needed to support the question simply wasn't there.
 
-Em vez de abandonar o projeto, a pergunta foi trocada, mantendo o mesmo tipo de dado já levantado: **dado o desempenho de um time nas 10 primeiras rodadas, dá pra prever em que posição ele vai terminar o campeonato (rodada 38)?**
+Instead of dropping the project, the question was changed while keeping the same kind of data already collected: **given a team's performance in the first 10 matchdays, can we predict what position it will finish in (matchday 38)?**
 
 ## Dataset
 
-- Fonte: tabelas de classificação do Transfermarkt, raspadas e formatadas em CSV com ajuda do Claude Cowork.
-- Anos usados: 2018, 2020, 2021, 2022, 2023, 2024 (treino) e 2025 (teste). 2019 foi descartado por ter uma temporada fora do padrão (Flamengo campeão com vantagem incomum sobre o 2º colocado).
-- Cada linha representa **um time em uma temporada** (20 times × 7 temporadas = 140 linhas).
-- Tamanho do dataset dimensionado pela regra prática de 10–15 linhas por feature (7 features → mínimo de ~105–130 linhas).
+- Source: Transfermarkt standings tables, scraped and formatted into CSV with help from Claude Cowork.
+- Years used: 2018, 2020, 2021, 2022, 2023, 2024 (training) and 2025 (test). 2019 was excluded for being an outlier season (Flamengo won the title with an unusually large margin over the runner-up).
+- Each row represents **one team in one season** (20 teams × 7 seasons = 140 rows).
+- Dataset size was sized using the rule of thumb of 10–15 rows per feature (7 features → minimum of ~105–130 rows).
 
-## Features (X) e alvo (y)
+## Features (X) and target (y)
 
-**Entradas (dados da rodada 10):**
-- Posição
-- Vitórias
-- Derrotas
-- Empates
-- Gols feitos
-- Gols sofridos
-- Pontos
+**Inputs (matchday 10 data):**
+- Position
+- Wins
+- Losses
+- Draws
+- Goals scored
+- Goals conceded
+- Points
 
-**Alvo:** Posição final (rodada 38)
+**Target:** Final position (matchday 38)
 
-Ficaram de fora do X, por decisão deliberada:
-- **Vitórias_38, Empates_38, Derrotas_38, Pontos_38** — vazamento de dado. Essas colunas são calculadas a partir do próprio resultado que o modelo deveria prever, então incluí-las seria dar a resposta pronta pro modelo.
-- **Saldo de gols** — informação redundante: SG = Gols feitos − Gols sofridos, já representados como features separadas. Manter o SG também não agregaria informação nova.
-- **Nome do clube** — usado só como chave para juntar as tabelas de rodada 10 e 38 do mesmo ano (join), nunca entrou como feature do modelo.
+Deliberately left out of X:
+- **Wins_38, Draws_38, Losses_38, Points_38** — data leakage. These columns are derived directly from the very outcome the model should predict, so including them would hand the model the answer.
+- **Goal difference** — redundant information: GD = goals scored − goals conceded, already represented as separate features. Keeping GD as well would add no new information.
+- **Club name** — used only as a key to join the matchday 10 and matchday 38 tables for the same year, never used as a model feature.
 
-## Metodologia
+## Methodology
 
-1. Merge de rodada 10 com rodada 38 **por ano**, usando o nome do clube como chave, evitando misturar temporadas diferentes.
-2. Concatenação dos anos de treino (2018–2024) em um único dataset.
-3. **Divisão temporal** ao invés de `train_test_split` aleatório: a temporada de 2025 inteira foi reservada como teste, nunca vista pelo modelo durante o treino. Essa escolha evita que o modelo seja avaliado com times muito parecidos aos de treino (elencos mudam pouco de uma temporada pra outra), tornando o teste mais rigoroso do que um split aleatório teria sido.
-4. Treino com `LinearRegression` do Scikit-Learn.
-5. Avaliação com **MAE** (Mean Absolute Error), escolhido em vez de MSE por manter a mesma unidade do problema (posições), permitindo uma leitura direta do erro.
+1. Merge matchday 10 with matchday 38 **per year**, using club name as the key, to avoid mixing different seasons.
+2. Concatenate the training years (2018–2024) into a single dataset.
+3. **Temporal split** instead of a random `train_test_split`: the entire 2025 season was held out as the test set, never seen by the model during training. This avoids evaluating the model on teams too similar to the ones it trained on (squads change little from one season to the next), making the test more rigorous than a random split would be.
+4. Train with Scikit-Learn's `LinearRegression`.
+5. Evaluate with **MAE** (Mean Absolute Error), chosen over MSE because it keeps the same unit as the problem (positions), allowing a direct reading of the error.
 
-## Resultado
+## Results
 
-**MAE = 2.73** — em média, o modelo erra por cerca de 3 posições na tabela.
+**MAE = 2.73** — on average, the model is off by about 3 positions in the table.
 
-O modelo acerta bem a direção geral: o time com a menor posição prevista (Palmeiras) e o com a maior (Juventude) bateram com os extremos reais da tabela de 2025, com pequenas trocas entre vizinhos próximos (ex: Palmeiras e Flamengo trocados no topo, Sport e Juventude trocados no fim). No meio da tabela o erro é maior — esperado, já que só 10 rodadas (26% do campeonato) carregam pouca informação sobre reviravoltas de rendimento que costumam definir o meio da tabela no Brasileirão.
+The model gets the overall direction right: the team with the lowest predicted position (Palmeiras) and the one with the highest (Juventude) matched the real extremes of the 2025 table, with minor swaps between close neighbors (e.g., Palmeiras and Flamengo swapped at the top, Sport and Juventude swapped at the bottom). The error is larger in the middle of the table — expected, since only 10 matchdays (26% of the season) carry little information about the performance swings that usually decide the middle of the Brasileirão table.
 
-## Aprendizados
+## Takeaways
 
-- Antes de escolher a ferramenta, é preciso garantir que o dado que sustenta a pergunta existe — a primeira ideia do projeto morreu por falta de dado, não por falha de modelagem.
-- Vazamento de dado (data leakage) pode ser sutil: colunas calculadas a partir do próprio alvo (Pontos, Vitórias da rodada 38) pareciam boas features à primeira vista.
-- Escolher a métrica certa (MAE vs. MSE) muda a interpretabilidade do resultado, não só o valor do erro.
-- `argsort` (numpy) permite transformar previsões contínuas em um ranking, resolvendo o descompasso entre "regressão dá números soltos" e "eu queria uma tabela ordenada".
-- Regra prática de linhas por feature (10–15:1) ajuda a dimensionar quanto dado é necessário antes de sair coletando.
-- 
+- Before picking the tool, make sure the data behind the question actually exists — the original project idea died from lack of data, not from a modeling failure.
+- Data leakage can be subtle: columns derived from the target itself (matchday-38 points, wins) looked like good features at first glance.
+- Picking the right metric (MAE vs. MSE) changes how interpretable the result is, not just its value.
+- `argsort` (numpy) turns continuous predictions into a ranking, bridging the gap between "regression outputs raw numbers" and "I wanted an ordered table."
+- The rows-per-feature rule of thumb (10–15:1) helps size how much data is needed before going out to collect it.
