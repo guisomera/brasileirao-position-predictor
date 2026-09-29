@@ -1,21 +1,21 @@
-Posição,Clube,Vitorias,Derrotas,Empates,Gols feitos,Gols sofridos,Pontos
-1,Botafogo,8,2,0,18,7,24
-2,Palmeiras,6,0,4,22,8,22
-3,Flamengo,6,3,1,21,11,19
-4,Atlético-MG,5,2,3,14,8,18
-5,Fluminense,5,3,2,16,11,17
-6,Grêmio,5,3,2,14,15,17
-7,Athletico-PR,5,4,1,14,13,16
-8,São Paulo,4,3,3,15,11,15
-9,Cruzeiro,4,4,2,14,10,14
-10,Internacional,4,4,2,10,13,14
-11,Fortaleza,3,2,5,12,8,14
-12,Bragantino,3,2,5,15,14,14
-13,Santos,3,3,4,9,8,13
-14,Cuiabá,3,4,3,9,14,12
-15,Bahia,2,5,3,11,16,9
-16,Corinthians,2,5,3,9,15,9
-17,Goiás,2,6,2,9,18,8
-18,América-MG,2,6,2,11,22,8
-19,Vasco da Gama,1,6,3,10,19,6
-20,Coritiba,0,6,4,8,20,4
+Posição,Clube,Vitorias,Derrotas,Empates,Gols feitos,Gols sofridos,Pontos,qualidade_elenco
+1,Botafogo,8,2,0,18,7,24,0.075878
+2,Palmeiras,6,0,4,22,8,22,0.072319
+3,Flamengo,6,3,1,21,11,19,0.115891
+4,Atlético-MG,5,2,3,14,8,18,0.083062
+5,Fluminense,5,3,2,16,11,17,0.046572
+6,Grêmio,5,3,2,14,15,17,0.060004
+7,Athletico-PR,5,4,1,14,13,16,0.034647
+8,São Paulo,4,3,3,15,11,15,0.067326
+9,Cruzeiro,4,4,2,14,10,14,0.03766
+10,Internacional,4,4,2,10,13,14,0.046302
+11,Fortaleza,3,2,5,12,8,14,0.027205
+12,Bragantino,3,2,5,15,14,14,0.045522
+13,Santos,3,3,4,9,8,13,0.056535
+14,Cuiabá,3,4,3,9,14,12,0.012831
+15,Bahia,2,5,3,11,16,9,0.042311
+16,Corinthians,2,5,3,9,15,9,0.059986
+17,Goiás,2,6,2,9,18,8,0.016702
+18,América-MG,2,6,2,11,22,8,0.020513
+19,Vasco da Gama,1,6,3,10,19,6,0.043722
+20,Coritiba,0,6,4,8,20,4,0.035007
