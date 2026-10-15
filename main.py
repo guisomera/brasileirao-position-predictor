@@ -19,6 +19,7 @@ def montar_tabela():
 tabela = montar_tabela()
 
 resultados = []
+resultados_treino = []
 for ano_teste in [2018, 2020, 2021, 2022, 2023, 2024, 2025]:
     treino = tabela[tabela["Ano"] != ano_teste]
     teste = tabela[tabela["Ano"] == ano_teste]
@@ -28,10 +29,20 @@ for ano_teste in [2018, 2020, 2021, 2022, 2023, 2024, 2025]:
 
     mae_modelo = mean_absolute_error(teste["Posição_38"], model.predict(teste[COLUNAS]))
     mae_baseline = mean_absolute_error(teste["Posição_38"], teste["Posição_10"])
+    mae_treino = mean_absolute_error(treino["Posição_38"], model.predict(treino[COLUNAS]))
+    baseline_treino = mean_absolute_error(treino["Posição_38"], treino["Posição_10"])
 
     resultados.append((ano_teste, mae_modelo, mae_baseline))
+    resultados_treino.append((ano_teste, mae_treino, baseline_treino))
     print(f"Ano: {ano_teste} | Modelo: {mae_modelo:.2f} | Baseline: {mae_baseline:.2f}"
           f" | treino={len(treino)} teste={len(teste)}")
+    print(f"      no treino -> Modelo: {mae_treino:.2f} | Baseline: {baseline_treino:.2f}"
+          f" | diferença modelo (fora - treino): {mae_modelo - mae_treino:.2f}")
+    if ano_teste == 2025:
+        print(f"\n2025 | MAE treino: {mae_treino:.2f} | MAE teste: {mae_modelo:.2f}"
+              f" | diferença: {mae_modelo - mae_treino:.2f}")
+        print(f"2025 baseline | treino: {baseline_treino:.2f} | teste: {mae_baseline:.2f}"
+              f" | diferença: {mae_baseline - baseline_treino:.2f}")
     if ano_teste == 2024:
         t = teste.sort_values("Posição_10")   # ordena do 1º ao 20º da rodada 10
         previsao = model.predict(t[COLUNAS])
@@ -44,3 +55,9 @@ vitorias = sum(1 for r in resultados if r[1] < r[2])
 
 print(f"\nMédia modelo: {modelo_medio:.2f} | Média baseline: {baseline_medio:.2f}")
 print(f"Modelo ganhou do baseline em {vitorias} de {len(resultados)} anos")
+
+treino_medio = np.mean([r[1] for r in resultados_treino])
+baseline_treino_medio = np.mean([r[2] for r in resultados_treino])
+print(f"\nMédia no treino        -> Modelo: {treino_medio:.2f} | Baseline: {baseline_treino_medio:.2f}")
+print(f"Média no ano de fora   -> Modelo: {modelo_medio:.2f} | Baseline: {baseline_medio:.2f}")
+print(f"Diferença média modelo (fora - treino): {modelo_medio - treino_medio:.2f}")
