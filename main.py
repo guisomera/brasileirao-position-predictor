@@ -20,6 +20,7 @@ tabela = montar_tabela()
 
 resultados = []
 resultados_treino = []
+
 for ano_teste in [2018, 2020, 2021, 2022, 2023, 2024, 2025]:
     treino = tabela[tabela["Ano"] != ano_teste]
     teste = tabela[tabela["Ano"] == ano_teste]
