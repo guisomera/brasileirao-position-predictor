@@ -8,7 +8,6 @@ COLUNAS = ["Posição_10", "Vitorias_10", "Empates_10",
 
 anos = [2018, 2020, 2021, 2022, 2023, 2024, 2025]
 
-
 def curva_aprendizado(ano_teste, tabela):
     resultados = []
     anos_treino = []
